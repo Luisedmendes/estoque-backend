@@ -1,0 +1,36 @@
+services:
+  database:
+    image: mysql:5.7.44
+    restart: unless-stopped
+    container_name: mysql-database
+    command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - '3306:3306'
+    environment:
+      MYSQL_USER: admin
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_PASSWORD: 123456
+      MYSQL_DATABASE: app_db
+    logging:
+      driver: "none"
+    networks:
+      - rs-network
+    volumes:
+      - database:/var/lib/mysql
+
+  redis:
+    image: redis:7.0-alpine
+    restart: unless-stopped
+    container_name: redis
+    ports:
+      - "6379:6379"
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    networks:
+      - rs-network
+
+networks:
+  rs-network:
+    driver: bridge
+
+volumes:
+  database:
