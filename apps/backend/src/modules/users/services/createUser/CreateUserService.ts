@@ -9,7 +9,6 @@ import { IConnection } from '@shared/typeorm';
 import { Route, Tags, Post, Body } from 'tsoa';
 import { IHashProviderDTO } from '@shared/container/providers/HashProvider/models/IHashProvider';
 import { AppError } from '@shared/errors/AppError';
-import { IWalletsRepository } from '@modules/finances/repositories/IWalletsRepository';
 
 @Route('/users')
 @injectable()
@@ -21,15 +20,12 @@ export class CreateUserService {
     @inject('CacheProvider')
     private readonly cacheProvider: ICacheProvider,
 
-    @inject('WalletsRepository')
-    private readonly walletsRepository: IWalletsRepository,
-
     @inject('Connection')
     private readonly connection: IConnection,
 
     @inject('HashProvider')
     private readonly hashProvider: IHashProviderDTO,
-  ) {}
+  ) { }
 
   @Post()
   @Tags('User')
@@ -59,20 +55,12 @@ export class CreateUserService {
 
       const hashedPassword = await this.hashProvider.generateHash(password);
 
-      const wallet = await this.walletsRepository.create(
-        {
-          value: 25000,
-        },
-        trx,
-      );
 
       const user = await this.usersRepository.create(
         {
           ...rest,
           email,
-          password: hashedPassword,
-          wallet,
-          wallet_id: wallet.id,
+          password: hashedPassword
         },
         trx,
       );

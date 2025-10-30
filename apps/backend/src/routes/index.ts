@@ -2,14 +2,13 @@ import { Router } from 'express';
 import { userRouter } from './userRouter';
 import { systemRouter } from './systemRouter';
 import { guardRouter } from './guardRouter';
+import { categoryRouter } from './categoryRouter';
 
-import { financeRouter } from './financeRouter';
-import { shareRouter } from './shareRouter';
 
 const routes = Router();
-routes.use(guardRouter);
+// routes.use(guardRouter);
 routes.use(userRouter);
+routes.use(categoryRouter);
 routes.use(systemRouter);
-routes.use(financeRouter);
-routes.use(shareRouter);
+
 export { routes };

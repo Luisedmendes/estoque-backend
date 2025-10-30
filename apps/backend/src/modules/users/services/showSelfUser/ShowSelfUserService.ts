@@ -16,7 +16,7 @@ export class ShowSelfUserService {
 
     @inject('Connection')
     private readonly connection: IConnection,
-  ) {}
+  ) { }
 
   @Get()
   @Tags('User')
@@ -27,18 +27,7 @@ export class ShowSelfUserService {
     try {
       const user = await this.usersRepository.findBy(
         {
-          where: { id },
-          relations: {
-            wallet: true,
-          },
-          select: {
-            id: true,
-            email: true,
-            name: true,
-            shares: true,
-            wallet: { id: true, value: true, last_transactions: true },
-            wallet_id: true,
-          },
+          where: { id }
         },
         trx,
       );
