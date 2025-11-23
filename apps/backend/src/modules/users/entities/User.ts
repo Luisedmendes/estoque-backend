@@ -14,7 +14,4 @@ export class User extends Base {
   @Column({ type: 'varchar', unique: false })
   public password: string;
 
-  @Column({ type: 'uuid', unique: true, nullable: true })
-  public wallet_id: string;
-
 }

@@ -4,7 +4,7 @@ import path from 'path';
 
 
 dotenv.config({
-  path: path.resolve(__dirname, '../../.env'), // caminho correto para apps/backend/.env
+  path: path.resolve(__dirname, '../../.env'),
 });
 
 

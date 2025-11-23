@@ -6,7 +6,7 @@ import { categoryRouter } from './categoryRouter';
 
 
 const routes = Router();
-// routes.use(guardRouter);
+routes.use(guardRouter);
 routes.use(userRouter);
 routes.use(categoryRouter);
 routes.use(systemRouter);

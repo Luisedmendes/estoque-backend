@@ -1,27 +1,73 @@
-export default async function Page() {
-  const res = await fetch("http://localhost:3333/categories", {
-    // Garante que a chamada não será cacheada no App Router
-    cache: "no-store",
-  });
+"use client";
 
-  const json = await res.json();
-  const categories = json.data;
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+type JWTResponse = {
+  jwt_token: string
+  refresh_token: string
+}
+
+export default function LoginPage() {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+
+    const res = await fetch(`${API_URL}/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+
+
+    if (!res.ok) {
+      alert("Credenciais inválidas");
+      return;
+    }
+
+    const { data }: { data: JWTResponse } = await res.json();
+
+    const token = data.jwt_token;
+
+    await fetch("/api/session", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token }),
+    });
+
+    router.push("/dashboard");
+  }
 
   return (
-    <main style={{ padding: 20 }}>
-      <h1 style={{ fontSize: "24px", fontWeight: "bold" }}>Categorias</h1>
+    <div className="flex h-screen justify-center items-center">
+      <form onSubmit={handleSubmit} className="p-6 rounded border w-80 space-y-4">
+        <h1 className="text-xl font-bold">Login</h1>
 
-      <div style={{ marginTop: 20 }}>
-        {categories.length === 0 ? (
-          <p>Nenhuma categoria encontrada.</p>
-        ) : (
-          <ul style={{ lineHeight: "28px" }}>
-            {categories.map((cat: any) => (
-              <li key={cat.id}>{cat.name}</li>
-            ))}
-          </ul>
-        )}
-      </div>
-    </main>
+        <input
+          className="border p-2 w-full"
+          placeholder="Email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+
+        <input
+          className="border p-2 w-full"
+          placeholder="Senha"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+
+        <button className="bg-black text-white w-full py-2 rounded">
+          Entrar
+        </button>
+      </form>
+    </div>
   );
 }

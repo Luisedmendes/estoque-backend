@@ -31,7 +31,6 @@ export class Product extends Base {
   @Column({ type: 'float', nullable: false })
   public sell_price: number;
 
-
   @ManyToOne(() => Category, category => category.products, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
