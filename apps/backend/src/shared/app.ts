@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import 'express-async-errors';
 import { setConnection } from '@middlewares/setConnection';
-// import { storageConfig } from '@config/storage'; // storageProvider
+import { storageConfig } from '@config/storage'; // storageProvider
 import { cryptoConfig } from '@config/crypto'; // cryptoProvider
 import cors from 'cors';
 import express, { Express } from 'express';
@@ -30,14 +30,14 @@ class App {
   private middlewares(): void {
     this.server.use(setConnection);
     this.server.use(cors(corsConfig));
-    this.server.use(rateLimiter);
+    // this.server.use(rateLimiter);
     this.server.use(express.json());
     this.server.use(parseParam);
   }
 
   private staticRoutes(): void {
     // this.server.use('/api-docs', serve, setup(swaggerDocs));
-    // this.server.use('/uploads', express.static(storageConfig.config.uploadsFolder)); // storageProvider
+    this.server.use('/uploads', express.static(storageConfig.config.uploadsFolder)); // storageProvider
     this.server.use('/jwks', express.static(cryptoConfig.config.jwksPath));
   }
 

@@ -37,7 +37,7 @@ export class ListCategoryService {
 
       if (!cache) {
         const { list, amount } = await this.categoriesRepository.findAll(
-          { where: filters, page, limit },
+          { where: filters, page, limit, relations: { products: true } },
           trx,
         );
         cache = { data: instanceToInstance(list), total: amount };
@@ -45,6 +45,13 @@ export class ListCategoryService {
       }
 
       if (trx.isTransactionActive) await trx.commitTransaction();
+
+      cache.data = cache.data.map(category => {
+        return {
+          ...category,
+          product_amount: category.products.length
+        }
+      })
 
       return {
         code: 200,
