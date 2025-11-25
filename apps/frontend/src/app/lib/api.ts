@@ -5,6 +5,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
 export async function api(endpoint: string, options: RequestInit = {}) {
     const token = await getSessionToken()
 
+
     return fetch(`${API_URL}${endpoint}`, {
         ...options,
         headers: {
@@ -15,3 +16,4 @@ export async function api(endpoint: string, options: RequestInit = {}) {
         cache: "no-store",
     });
 }
+

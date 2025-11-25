@@ -1,0 +1,50 @@
+version: "3.9"
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_DATABASE: database
+      MYSQL_ROOT_PASSWORD: 123456
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  redis:
+    image: redis:7
+    container_name: redis
+    command: ["redis-server", "--requirepass", "12345"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  backend:
+    build: ./apps/backend
+    container_name: backend
+    depends_on:
+      - mysql
+      - redis
+    ports:
+      - "3333:3333"
+    env_file:
+      - ./apps/backend/.env.docker
+    command: npm run dev
+
+  frontend:
+    build: ./apps/frontend
+    container_name: frontend
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./apps/frontend/.env.docker
+
+volumes:
+  mysql_data:
+  redis_data:

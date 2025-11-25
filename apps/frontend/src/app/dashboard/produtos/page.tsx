@@ -1,15 +1,15 @@
 import { isLoggedIn } from "@/app/lib/auth";
 import { redirect } from "next/navigation";
-import { columns, CategoryType } from "./columns"
-import { DataTable } from "@/components/ui/data-table";
+import { columns, ProductType } from "./columns"
 import { api } from "@/app/lib/api";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { routes } from "@/app/lib/routes";
+import { DataTableCustom } from "@/components/ui/data-table-custom";
 
-async function getData(): Promise<CategoryType[]> {
+async function getData(): Promise<ProductType[]> {
 
-	const res = await api("/categories");
+	const res = await api("/products");
 	const data = await res.json();
 
 	return data.data
@@ -24,12 +24,12 @@ export default async function CategoryPage() {
 
 	return (
 		<div className="flex w-full flex-col items-end">
-			<Link href={routes.categorias.create}>
+			<Link href={routes.produtos.create}>
 				<Button variant="outline" className="ml-auto">
-					Criar Categoria
+					Criar Produto
 				</Button>
 			</Link>
-			<DataTable columns={columns} data={data} />
+			<DataTableCustom columns={columns} data={data} />
 		</div>
 	);
 }

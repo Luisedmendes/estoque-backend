@@ -17,16 +17,42 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { useRouter } from "next/navigation";
 import { api } from "@/app/lib/api"
 
-export type CategoryType = {
-  id: string
-  created_at: string
-  updated_at: string
-  name: string
-  product_amount: number
+export type ProductType = {
+  id: string,
+  created_at: string,
+  updated_at: string,
+  name: string,
+  cost_price: number,
+  sell_price: number,
+  category_id: string,
+  category: {
+    id: string,
+    created_at: string,
+    updated_at: string,
+    name: string
+  },
+  file_id: string,
+  file: {
+    id: string,
+    created_at: string,
+    updated_at: string,
+    file_url: string,
+    folder_id: string,
+    file: string,
+    name: string
+  },
+  tags: Array<
+    {
+      id: string,
+      created_at: string,
+      updated_at: string,
+      name: "importado" | "inflamável" | "perecível" | "frágil"
+    }>
 }
 
 
-export const columns: ColumnDef<CategoryType>[] = [
+
+export const columns: ColumnDef<ProductType>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -64,20 +90,68 @@ export const columns: ColumnDef<CategoryType>[] = [
     },
   },
   {
-    accessorKey: "product_amount",
+    accessorKey: "cost_price",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Nº de produtos
+          $ de custo
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
     },
     cell: ({ row }) => {
-      return <div className="text-start font-medium">{row.getValue("product_amount")}</div>
+      const amount = parseFloat(row.getValue("cost_price"))
+      const formatted = new Intl.NumberFormat("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      }).format(amount)
+
+      return <div className="text-start font-medium">{formatted}</div>
+    },
+  },
+  {
+    accessorKey: "sell_price",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          $ de venda
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+    cell: ({ row }) => {
+      const amount = parseFloat(row.getValue("sell_price"))
+      const formatted = new Intl.NumberFormat("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      }).format(amount)
+
+      return <div className="text-start font-medium">{formatted}</div>
+    },
+  },
+  {
+    accessorKey: "category",
+    accessorFn: (row) => row.category.name, // <- AQUI!
+    header: () => <div className="text-start">Categoria</div>,
+    cell: ({ row }) => {
+      return <div className="text-start font-medium">{row.original.category.name}</div>
+    },
+  },
+  {
+    accessorKey: "tags",
+    header: () => <div className="text-start">Tags</div>,
+    cell: ({ row }) => {
+      const product = row.original
+      return <div className="text-start font-medium">
+        {product.tags.map(tag => tag.name).join(", ")}
+      </div>
+
     },
   },
   {
@@ -85,10 +159,10 @@ export const columns: ColumnDef<CategoryType>[] = [
     cell: ({ row }) => {
       const router = useRouter();
 
-      const category = row.original
+      const product = row.original
 
-      const deleteCategory = async () => {
-        await api(`/categories/${category.id}`, { method: 'DELETE' })
+      const deleteProduct = async () => {
+        await api(`/products/${product.id}`, { method: 'DELETE' })
         router.refresh()
       }
 
@@ -103,18 +177,18 @@ export const columns: ColumnDef<CategoryType>[] = [
           <DropdownMenuContent align="end">
             {/* <DropdownMenuLabel>Actions</DropdownMenuLabel> */}
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(category.id)}
+              onClick={() => navigator.clipboard.writeText(product.id)}
             >
               Copiar id
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={deleteCategory} >
+            <DropdownMenuItem onClick={deleteProduct} >
               <Trash2 className="h-4 w-4" />
               <span>
                 Excluir
               </span>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => router.push(routes.categorias.edit(category.id))}>
+            <DropdownMenuItem onClick={() => router.push(routes.produtos.edit(product.id))}>
               <Pen className="h-4 w-4" />
               <span>
                 Atualizar

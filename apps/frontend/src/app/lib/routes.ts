@@ -3,13 +3,13 @@ export const routes = {
 
     categorias: {
         list: "/dashboard/categorias",
-        create: "/dashboard/categorias/novo",
-        edit: (id: string) => `/dashboard/categorias/${id}/editar`,
+        create: "/dashboard/categorias/new",
+        edit: (id: string) => `/dashboard/categorias/${id}`,
     },
 
     produtos: {
         list: "/dashboard/produtos",
-        create: "/dashboard/produtos/novo",
-        edit: (id: string) => `/dashboard/produtos/${id}/editar`,
+        create: "/dashboard/produtos/new",
+        edit: (id: string) => `/dashboard/produtos/${id}`,
     },
 };
